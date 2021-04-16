@@ -1,5 +1,6 @@
 package br.com.bandtec.lutalivregabrielreis.controle;
 
+import br.com.bandtec.lutalivregabrielreis.dominio.Golpeador;
 import br.com.bandtec.lutalivregabrielreis.dominio.Lutador;
 import br.com.bandtec.lutalivregabrielreis.repositorio.LutadorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ public class LutadorController {
     public LutadorRepository repository;
     int contador = 0;
     List<Lutador> lutador;
+
 
     @PostMapping
     public ResponseEntity postaLutador(@RequestBody Lutador novoLutador) {
@@ -60,8 +62,13 @@ public class LutadorController {
     }
 
     @PostMapping("/golpe")
-    public ResponseEntity golpeia(@RequestBody Integer idLutadorBate, Integer idLutadorApanha){
-    return ResponseEntity.status(200).body(idLutadorBate.toString() + idLutadorApanha.toString());
+    public ResponseEntity golpeia(@RequestBody Golpeador novoGolpe){
+        Golpeador golpe = novoGolpe;
+        Lutador lutadorBate = lutador.get(golpe.getIdLutadorBate());
+        Lutador lutadorApanha = lutador.get(golpe.getIdLutadorApanha());
+        lutadorApanha.setVida(lutadorApanha.getVida()-lutadorBate.getForcaGolpe());
+        repository.save(lutadorApanha);
+    return ResponseEntity.status(200).body(repository.findAll());
     }
 
 
